@@ -36,14 +36,6 @@ class App < Sinatra::Application
   post "/registrations" do
     if validate_registration_params
       User.create(username: params[:username], password: params[:password])
-      #
-      # insert_sql = <<-SQL
-      # INSERT INTO users (username, password)
-      # VALUES ('#{params[:username]}', '#{params[:password]}')
-      # SQL
-      #
-      # @database_connection.sql(insert_sql)
-
       flash[:notice] = "Thanks for registering"
       redirect "/"
     else
@@ -87,13 +79,8 @@ class App < Sinatra::Application
 
   post "/fish" do
     if validate_fish_params
-      insert_sql = <<-SQL
-      INSERT INTO fish (name, wikipedia_page, user_id)
-      VALUES ('#{params[:name]}', '#{params[:wikipedia_page]}', #{current_user["id"]})
-      SQL
 
-      @database_connection.sql(insert_sql)
-
+      Fish.create(name: params[:name], wikipedia_page: params[:wikipedia_page], user_id: current_user[:id])
       flash[:notice] = "Fish Created"
 
       redirect "/"
