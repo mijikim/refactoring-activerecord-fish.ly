@@ -35,12 +35,14 @@ class App < Sinatra::Application
 
   post "/registrations" do
     if validate_registration_params
-      insert_sql = <<-SQL
-      INSERT INTO users (username, password)
-      VALUES ('#{params[:username]}', '#{params[:password]}')
-      SQL
-
-      @database_connection.sql(insert_sql)
+      User.create(username: params[:username], password: params[:password])
+      #
+      # insert_sql = <<-SQL
+      # INSERT INTO users (username, password)
+      # VALUES ('#{params[:username]}', '#{params[:password]}')
+      # SQL
+      #
+      # @database_connection.sql(insert_sql)
 
       flash[:notice] = "Thanks for registering"
       redirect "/"
@@ -69,16 +71,8 @@ class App < Sinatra::Application
   end
 
   delete "/users/:id" do
-    # delete_sql =
       user = User.find_by(id: params[:id])
       user.destroy
-    #   <<-SQL
-    # DELETE FROM users
-    # WHERE id = #{params[:id]}
-    # SQL
-    #
-    # @database_connection.sql(delete_sql)
-
     redirect "/"
   end
 
@@ -177,7 +171,8 @@ class App < Sinatra::Application
   end
 
   def username_available?(username)
-    existing_users = #User.find(username: username)
+    existing_users =
+    #   User.find_by(username: username)
 
     @database_connection.sql("SELECT * FROM users where username = '#{username}'")
 
