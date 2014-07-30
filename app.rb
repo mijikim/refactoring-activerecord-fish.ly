@@ -69,12 +69,15 @@ class App < Sinatra::Application
   end
 
   delete "/users/:id" do
-    delete_sql = <<-SQL
-    DELETE FROM users
-    WHERE id = #{params[:id]}
-    SQL
-
-    @database_connection.sql(delete_sql)
+    # delete_sql =
+      user = User.find_by(id: params[:id])
+      user.destroy
+    #   <<-SQL
+    # DELETE FROM users
+    # WHERE id = #{params[:id]}
+    # SQL
+    #
+    # @database_connection.sql(delete_sql)
 
     redirect "/"
   end
@@ -84,7 +87,7 @@ class App < Sinatra::Application
   end
 
   get "/fish/:id" do
-    fish = @database_connection.sql("SELECT * FROM fish WHERE id = #{params[:id]}").first
+    fish = Fish.find(id: params[:id])
     erb :"fish/show", locals: {fish: fish}
   end
 
@@ -174,12 +177,15 @@ class App < Sinatra::Application
   end
 
   def username_available?(username)
-    existing_users = @database_connection.sql("SELECT * FROM users where username = '#{username}'")
+    existing_users = #User.find(username: username)
+
+    @database_connection.sql("SELECT * FROM users where username = '#{username}'")
 
     existing_users.length == 0
   end
 
   def authenticate_user
+    # User.find(username: params[:username])
     select_sql = <<-SQL
     SELECT * FROM users
     WHERE username = '#{params[:username]}' AND password = '#{params[:password]}'
