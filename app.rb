@@ -159,11 +159,8 @@ class App < Sinatra::Application
 
   def username_available?(username)
     existing_users =
-    #   User.find_by(username: username)
-
-    @database_connection.sql("SELECT * FROM users where username = '#{username}'")
-
-    existing_users.length == 0
+      User.find_by(username: username)
+    existing_users == nil
   end
 
   def authenticate_user
