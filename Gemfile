@@ -10,3 +10,10 @@ gem "database_cleaner"
 gem "capybara"
 gem "rake"
 gem "pg", "~> 0.17.1"
+gem 'sinatra-contrib'
+gem 'sinatra-activerecord'
+gem 'sass'
+gem 'susy'
+gem 'sinatra-partial'
+gem 'actionview', '~> 4.1.4'
+gem 'activesupport', '~> 4.1.4'

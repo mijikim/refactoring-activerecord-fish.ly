@@ -24,7 +24,7 @@ feature "Logged in user" do
     fill_in "Password", with: "t0psecret"
 
     click_button "Sign In"
-
+    save_and_open_page
     within ".user-list" do
       expect(page).to have_no_content "hoonta"
       expect(page).to have_content "Fred"
