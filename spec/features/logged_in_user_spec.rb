@@ -19,7 +19,8 @@ feature "Logged in user" do
     visit "/"
 
     register_user("hoonta", "t0psecret")
-    save_and_open_page
+    # save_and_open_page
+
     fill_in "Username", with: "hoonta"
     fill_in "Password", with: "t0psecret"
 
@@ -67,6 +68,7 @@ feature "Logged in user" do
     fill_in "Name", with: "coelacanth"
     fill_in "Wikipedia Page", with: "http://en.wikipedia.org/wiki/Coelacanth"
     click_button "Create Fish"
+
 
     expect(page).to have_content "Fish Created"
 

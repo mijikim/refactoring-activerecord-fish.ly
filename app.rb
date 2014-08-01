@@ -34,8 +34,10 @@ class App < Sinatra::Application
   end
 
   post "/registrations" do
+
     if validate_registration_params
-      User.create(username: params[:username], password: params[:password])
+      user = User.create(username: params[:username], password: params[:password])
+      user.errors.messages
       flash[:notice] = "Thanks for registering"
       redirect "/"
     else
@@ -63,35 +65,35 @@ class App < Sinatra::Application
   end
 
   delete "/users/:id" do
-      user = User.find_by(id: params[:id])
-      user.destroy
+    User.find(params[:id]).destroy
     redirect "/"
   end
 
   get "/fish/new" do
-    erb :"fish/new"
+    erb :"fish/new", locals: {fish: Fish.new}
   end
 
   get "/fish/:id" do
-    fish = Fish.find(id: params[:id])
+    fish = Fish.find(params[:id])
     erb :"fish/show", locals: {fish: fish}
   end
 
   post "/fish" do
-    if validate_fish_params
+    fish = Fish.new(name: params[:name], wikipedia_page: params[:wikipedia_page], user_id: current_user[:id])
 
-      Fish.create(name: params[:name], wikipedia_page: params[:wikipedia_page], user_id: current_user[:id])
+    if fish.save
       flash[:notice] = "Fish Created"
 
       redirect "/"
     else
-      erb :"fish/new"
+      erb :"fish/new", locals: {fish: fish}
     end
   end
 
   private
 
   def validate_registration_params
+
     if params[:username] != "" && params[:password].length > 3 && username_available?(params[:username])
       return true
     end
@@ -110,26 +112,6 @@ class App < Sinatra::Application
       error_messages.push("Password is required")
     elsif params[:password].length < 4
       error_messages.push("Password must be at least 4 characters")
-    end
-
-    flash[:notice] = error_messages.join(", ")
-
-    false
-  end
-
-  def validate_fish_params
-    if params[:name] != "" && params[:wikipedia_page] != ""
-      return true
-    end
-
-    error_messages = []
-
-    if params[:name] == ""
-      error_messages.push("Name is required")
-    end
-
-    if params[:wikipedia_page] == ""
-      error_messages.push("Wikipedia page is required")
     end
 
     flash[:notice] = error_messages.join(", ")
@@ -159,18 +141,12 @@ class App < Sinatra::Application
 
   def username_available?(username)
     existing_users =
-      User.find_by(username: username)
+      User.find_by_username(username)
     existing_users == nil
   end
 
   def authenticate_user
-    # User.find(username: params[:username])
-    select_sql = <<-SQL
-    SELECT * FROM users
-    WHERE username = '#{params[:username]}' AND password = '#{params[:password]}'
-    SQL
-
-    @database_connection.sql(select_sql).first
+    User.find_by(username: params[:username], password: params[:password])
   end
 
   def current_user

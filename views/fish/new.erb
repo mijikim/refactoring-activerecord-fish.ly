@@ -5,6 +5,9 @@
     <li>
       <label for="name">Name</label>
       <input type="text" name="name" id="name"/>
+      <span><% fish.errors.full_messages.each do |error| %>
+        <%= error %>
+          <% end %></span>
     </li>
     <li>
       <label for="wikipedia_page">Wikipedia Page</label>
